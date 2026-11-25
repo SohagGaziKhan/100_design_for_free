@@ -1,0 +1,34 @@
+const config = globalThis.__CONFIG__ ?? {};
+import { useMemo, useState } from "react";
+
+export default function App() {
+  const [topic, setTopic] = useState("All stories");
+  const [query, setQuery] = useState("");
+  const [subscribed, setSubscribed] = useState(false);
+  const c = config.colors;
+  const topics = ["All stories", ...config.features];
+  const articles = config.features.map((feature, i) => ({
+    title: [`The details that change how we see things`, `A useful guide to ${feature.toLowerCase()}`, `What we learned by looking closer`][i],
+    category: feature,
+    read: `${5 + i * 2} min read`,
+    color: [c.surface, "#e5e9e3", "#eee5dc"][i],
+  }));
+  const visible = useMemo(() => articles.filter((article) => (topic === "All stories" || article.category === topic) && `${article.title} ${article.category}`.toLowerCase().includes(query.toLowerCase())), [topic, query]);
+  const dark = config.variant === 3 || config.variant === 8;
+  const bg = dark ? c.ink : "#fbfaf7";
+  const fg = dark ? "#f7f6f2" : c.ink;
+  return <div className="min-h-screen" style={{ backgroundColor: bg, color: fg }}>
+    <div className="border-b border-current/10"><header className="mx-auto flex max-w-7xl items-center justify-between gap-5 px-5 py-5 sm:px-8"><a href="#" className="flex items-center gap-2 font-semibold tracking-tight"><span className="grid size-8 place-items-center rounded-lg text-xs text-white" style={{ backgroundColor: c.accent }}>{config.brand[0]}</span>{config.brand}<span className="hidden text-[9px] font-normal uppercase tracking-[.15em] opacity-45 sm:inline">/ Ideas worth your time</span></a><nav className="hidden gap-5 text-[10px] opacity-65 md:flex">{config.features.map((feature) => <a key={feature} href="#stories">{feature}</a>)}</nav><label className="flex items-center gap-2 rounded-full border border-current/15 px-3 py-2"><span className="text-sm opacity-50">⌕</span><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search stories" className="w-24 bg-transparent text-[10px] outline-none sm:w-32" /></label></header></div>
+    <main>
+      <section className="mx-auto max-w-7xl px-5 py-10 sm:px-8 sm:py-14"><div className="flex flex-wrap items-end justify-between gap-5"><div><p className="text-[10px] uppercase tracking-[.2em] opacity-50">A publication by {config.brand}</p><h1 className="mt-4 max-w-3xl text-4xl font-semibold leading-[1.06] tracking-[-.045em] sm:text-6xl">{config.headline}</h1></div><p className="max-w-sm text-sm leading-6 opacity-65">{config.description}</p></div>
+        <article className="mt-9 grid overflow-hidden rounded-2xl md:grid-cols-[1.1fr_.9fr]" style={{ backgroundColor: c.surface, color: c.ink }}><div className="relative min-h-[250px] overflow-hidden p-6 sm:min-h-[330px] sm:p-9"><span className="text-[10px] uppercase tracking-[.17em] opacity-55">THE LATEST / FEATURED STORY</span><div className="absolute -bottom-16 right-5 grid size-56 place-items-center rounded-full border-[24px] border-white/40 sm:right-12 sm:size-72"><span className="grid size-32 place-items-center rounded-full text-4xl text-white" style={{ backgroundColor: c.accent }}>✳</span></div><span className="absolute bottom-8 left-7 max-w-[48%] text-[10px] opacity-55">An ongoing study of the useful, the beautiful and the things in between.</span></div><div className="flex flex-col justify-between p-6 sm:p-9"><div><p className="text-[10px] uppercase tracking-[.15em] opacity-55">{config.features[0]} · {articles[0].read}</p><h2 className="mt-4 max-w-lg text-2xl font-semibold leading-tight tracking-tight sm:text-3xl">{articles[0].title}</h2><p className="mt-4 text-sm leading-6 opacity-70">{config.description}</p></div><a href="#stories" className="mt-7 inline-flex items-center gap-2 text-xs font-medium">Read the story <span>↗</span></a></div></article>
+      </section>
+      <section id="stories" className="border-y border-current/10 px-5 py-10 sm:px-8"><div className="mx-auto max-w-7xl"><div className="flex flex-wrap items-end justify-between gap-4"><div><p className="text-[10px] uppercase tracking-[.18em] opacity-50">From the journal</p><h2 className="mt-2 text-2xl font-semibold tracking-tight">Stories and perspectives</h2></div><div className="flex max-w-full gap-1 overflow-x-auto">{topics.map((item) => <button key={item} onClick={() => setTopic(item)} className={"whitespace-nowrap rounded-full px-3 py-2 text-[10px] " + (topic === item ? "text-white" : "opacity-60")} style={topic === item ? { backgroundColor: c.ink } : {}}>{item}</button>)}</div></div>
+          <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{visible.map((article, i) => <article key={article.category} className="overflow-hidden rounded-xl border border-current/10"><div className="relative grid aspect-[1.5] place-items-center" style={{ backgroundColor: article.color }}><span className="absolute left-4 top-4 text-[10px] opacity-50">0{i + 1} / FIELD NOTES</span><div className="grid size-24 place-items-center rounded-full border-[12px] border-white/50 text-2xl" style={{ backgroundColor: c.accent, color: "#fff" }}>{["◌", "✳", "↗"][i]}</div></div><div className="p-4"><p className="text-[9px] uppercase tracking-[.15em] opacity-50">{article.category} <span className="mx-1">·</span> {article.read}</p><h3 className="mt-2 text-base font-medium leading-snug">{article.title}</h3><p className="mt-2 text-xs leading-5 opacity-65">{config.description}</p><a href="#" className="mt-4 inline-flex items-center gap-2 text-[10px] font-medium" style={{ color: c.accent }}>Read article <span>↗</span></a></div></article>)}</div>
+          {!visible.length && <p className="py-12 text-center text-sm opacity-60">No stories match this search.</p>}
+        </div></section>
+      <section className="mx-auto grid max-w-7xl gap-5 px-5 py-12 sm:px-8 md:grid-cols-[1fr_auto] md:items-center"><div><p className="text-[10px] uppercase tracking-[.16em] opacity-50">A thoughtful note, now and then</p><h2 className="mt-2 text-2xl font-semibold tracking-tight">Get the good reads in your inbox.</h2><p className="mt-2 text-sm opacity-65">A short, considered digest from {config.brand}.</p></div><form onSubmit={(event) => { event.preventDefault(); setSubscribed(true); }} className="flex w-full max-w-md gap-2 rounded-xl border border-current/15 bg-white p-1.5"><input type="email" required placeholder="Email address" className="min-w-0 flex-1 bg-transparent px-3 text-xs text-slate-900 outline-none" /><button className="rounded-lg px-4 py-2 text-xs font-medium text-white" style={{ backgroundColor: c.accent }}>{subscribed ? "Subscribed" : "Subscribe"}</button></form></section>
+    </main>
+    <footer className="flex justify-between border-t border-current/10 px-5 py-5 text-[10px] opacity-50 sm:px-8"><span>© {new Date().getFullYear()} {config.brand}</span><span>Read with curiosity.</span></footer>
+  </div>;
+}

@@ -1,0 +1,7 @@
+@import "tailwindcss";
+:root{--bg:#f6f5f2;--panel:#fff;--fg:#1a1a1c;--mut:#6b6b73;--line:#e4e2dc;--ac:#5b5bd6}
+[data-theme="dark"]{--bg:#121214;--panel:#1a1a1e;--fg:#f4f4f5;--mut:#9a9aa3;--line:#2a2a30;--ac:#8b8bf5}
+@theme inline{--color-bg:var(--bg);--color-panel:var(--panel);--color-fg:var(--fg);--color-mut:var(--mut);--color-line:var(--line);--color-ac:var(--ac);--font-sans:"Inter",system-ui,sans-serif}
+body{background:var(--bg);color:var(--fg);transition:background .2s}
+*:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
